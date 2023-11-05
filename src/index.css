@@ -1,6 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .raleway{
 font-family: 'Raleway', sans-serif;
 }
 .manrope{
   font-family: 'Manrope', sans-serif;
+}
+.shadowQ{
+  box-shadow: 20px 19px 2px 0px rgba(20, 50, 79, 1);
 }
