@@ -2,11 +2,16 @@ import React, { useState } from "react";
 import * as Y from "yup";
 import TextField from "../core-ui/text-field";
 import { useFormik } from "formik";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword
+} from "firebase/auth";
 import { auth } from "../../firebase-config";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { BeatLoader } from "react-spinners";
+import { useUserAuthContext } from "../context/usercontext";
 
 export default function Signin() {
   const navigate = useNavigate();
@@ -18,16 +23,21 @@ export default function Signin() {
     }),
     onSubmit: async (values) => {
       setLoading(true); // Set loading to true on form submission
-      await signup(values.email, values.password);
+      await signin(values.email, values.password);
       setLoading(false);
     },
   });
 
+  const { setLoggedUser }: any = useUserAuthContext();
+  onAuthStateChanged(auth, (currentUser) => {
+    setLoggedUser(currentUser);
+  });
+
   const [loading, setLoading] = useState<Boolean>(false);
 
-  const signup = async (email: string, password: string) => {
+  const signin = async (email: string, password: string) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
+      const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
@@ -35,6 +45,7 @@ export default function Signin() {
       const user = userCredential?.user;
       if (user) {
         navigate("/home");
+        
       }
     } catch (error: any) {
       toast.error(error.message, {

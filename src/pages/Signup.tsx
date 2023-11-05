@@ -35,6 +35,7 @@ export default function Signup() {
       const user = userCredential?.user;
       if (user) {
         navigate("/signin");
+        toast.success("Your Account has been created")
       }
     } catch (error: any) {
       toast.error(error.message, {
@@ -58,6 +59,11 @@ export default function Signup() {
               Form-Builder
             </h1>
           </div>
+          <div>
+              <h1 className="text-3xl font-manrope font-semibold text-[#7f8183]">
+                Sign Up
+              </h1>
+            </div>
 
           <div className="py-4">
             <div>
@@ -86,7 +92,7 @@ export default function Signup() {
                   type="submit"
                   className="w-full font-manrope  rounded-md bg-primary  py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >
-                  {loading ? <BeatLoader size={8} color={"#fff"} /> : "Sign in"}
+                  {loading ? <BeatLoader size={8} color={"#fff"} /> : "Sign up"}
                 </button>
                 <div className="flex items-center justify-end">
                   <div className="text-sm flex justify-end leading-6">
