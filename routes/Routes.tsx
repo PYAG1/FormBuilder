@@ -3,7 +3,7 @@ import Main from "../src/pages/HomePage"
 import React from "react";
 import Signup from "../src/pages/Signup";
 import Signin from "../src/pages/Signin";
-import MainPage from "../src/pages/MainPage";
+import MainPage from "../src/pages/MainPage/MainPage";
 
 export const router = createBrowserRouter([
     {

@@ -9,7 +9,29 @@ datasource db {
   url = env("POSTGRES_PRISMA_URL") // uses connection pooling
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
-
+//when defining in prisma you use model for your tables
+//you use @default() to define the default type
 model Form{
-  id Int @
+  id Int @id @default(autoincrement())
+  userId String
+  createdAt DateTime @default(now()) //to set the created by date to now
+  published Boolean @default(false)
+  title String
+  description String
+  content String @default("{}")
+
+  visits Int @default(0)
+  submissions Int @default(0)
+
+  shareUrl String @default(uuid()) 
+FormSubmission FormSubmission[]
+}
+
+model FormSubmission{
+  id Int @id @default(autoincrement())
+    createdAt DateTime @default(now()) 
+    formId Int
+    form Form @relation(fields: [formId],references: [id])
+
+    content String
 }
