@@ -1,10 +1,12 @@
-import React from 'react'
-import NavBar from '../../components/NavBar'
+import React, { Suspense } from 'react'
+import NavBar from '../../components/Navigation/NavBar'
 import {
 
   ScaleIcon,CheckCircleIcon,ArrowTrendingUpIcon,ArrowTrendingDownIcon
 
 } from '@heroicons/react/24/outline'
+import CreateFormButton from '../../components/MainPage/CreateFormBtn'
+
 const cards = [
   { name: 'Total visits', href: '#', icon: ScaleIcon, amount: '0' },
   { name: 'Total Submission', href: '#', icon: CheckCircleIcon, amount: '0' },
@@ -17,7 +19,8 @@ export default function MainPage() {
   return (
     <div className=' w-full'>
        <NavBar/> 
-       <div className="w-full min-h-screen pt-8 bg-ashbg">
+  
+       <div className="w-full min-h-screen pt-8 bg-background">
               <div className="mx-auto max-w-6xl px-4 sm:px-6  lg:px-8">
                 <h2 className="text-lg font-medium leading-6 text-gray-900">Overview</h2>
                 <div className="mt-2 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -50,7 +53,16 @@ export default function MainPage() {
                   ))}
                 </div>
               </div>
-              <div className=' w-full'>
+              <div className="mx-auto max-w-6xl px-4 sm:px-6  lg:px-8">
+                <p className=' text-2xl font-semibold py-6'>Your Form</p>
+
+                <div>
+                  <CreateFormButton/>
+                  <Suspense>
+                    
+                  </Suspense>
+
+                </div>
                 
               </div>
               </div>
