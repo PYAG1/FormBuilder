@@ -23,10 +23,10 @@ export default function Main() {
 
           <div className=" mt-[1em] w-full flex justify-center gap-[2.5em] ">
           
-            <button className=" w-[100px]  font-semibold bg-[#3bd85e] p-3 text-center text-[#14324f] shadowQ">
+            <button className=" w-[100px]  font-semibold bg-primary p-3 text-center text-secondary ">
               Sign in
             </button>
-            <button  className=" w-[100px]  font-semibold bg-[#3bd85e] p-3 text-center text-[#14324f] shadowQ" onClick={()=>{navigate('/signup')}}>
+            <button  className=" w-[100px]  font-semibold bg-primary p-3 text-center text-secondary " onClick={()=>{navigate('/signup')}}>
               Sign up
             </button>
           </div>

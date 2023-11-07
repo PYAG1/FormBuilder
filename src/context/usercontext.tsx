@@ -6,6 +6,7 @@ export interface Provider {
   }
 
 const UserAuthContext = createContext(null);
+
 export const useUserAuthContext = ()=>{
   return   useContext(UserAuthContext)
 }
@@ -13,8 +14,8 @@ export const useUserAuthContext = ()=>{
 
 export const AuthProvider:React.FC<Provider>= ({children})=>{
 const [LoggedUser,setLoggedUser]= useState({})
-const [token, setToken]= useState("")
+const token = localStorage.getItem("UserToken")
 
 //@ts-ignore
-return <UserAuthContext.Provider value={{LoggedUser,setLoggedUser,token,setToken}}>{children}</UserAuthContext.Provider>
+return <UserAuthContext.Provider value={{LoggedUser,setLoggedUser,token}}>{children}</UserAuthContext.Provider>
 }

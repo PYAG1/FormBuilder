@@ -7,11 +7,18 @@ export default {
   theme: {
     extend: {
       colors:{
-        primary:"#3bd85e",
-        text:"#14324f",
-        tet:"#065f89",
-        tet2:"#0890b1",
-        ashbg:"#eeeff0"
+        primary:"#1c1d1e",
+        secondary:"#2dcda1",
+        tetiary:"#e8ebf0",
+        ash:"#767777",
+        paleyellow:"#faedcd",
+        background:"#f8f8f9",
+        paleBlue:"#d4edf9",
+        palePink:"#fee0f1",
+        paleGreen:"#c1f1e2",
+
+    
+        card:"#f1f0f0"
       }
     },
   },

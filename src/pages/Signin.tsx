@@ -28,10 +28,13 @@ export default function Signin() {
     },
   });
 
-  const { setLoggedUser }: any = useUserAuthContext();
+  const { setLoggedUser,LoggedUser,token }: any = useUserAuthContext();
   onAuthStateChanged(auth, (currentUser) => {
     setLoggedUser(currentUser);
   });
+
+
+  console.log(LoggedUser)
 
   const [loading, setLoading] = useState<Boolean>(false);
 
@@ -44,6 +47,9 @@ export default function Signin() {
       );
       const user = userCredential?.user;
       if (user) {
+        const idToken = await user.getIdToken();
+      
+        localStorage.setItem("UserToken",idToken)
         navigate("/home");
         
       }
