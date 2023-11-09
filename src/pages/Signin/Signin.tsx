@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import * as Y from "yup";
-import TextField from "../core-ui/text-field";
+import TextField from "../../core-ui/text-field";
 import { useFormik } from "formik";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword
 } from "firebase/auth";
-import { auth } from "../../firebase-config";
+import { auth } from "../../../firebase-config";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { BeatLoader } from "react-spinners";
-import { useUserAuthContext } from "../context/usercontext";
+import { useUserAuthContext } from "../../context/usercontext";
 
 export default function Signin() {
   const navigate = useNavigate();
