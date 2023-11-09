@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import NavBar from "../../components/Navigation/NavBar";
 import {
   ScaleIcon,
@@ -8,6 +8,12 @@ import {
 } from "@heroicons/react/24/outline";
 import CreateFormButton from "../../components/MainPage/CreateFormBtn";
 import { Navigate } from "react-router-dom";
+
+import { getDocs } from "firebase/firestore";
+import { colRef } from "../../../firebase-config";
+import FormDataComponent from "../../components/MainPage/FormDisplayComponent";
+
+
 
 
 const cards = [
@@ -23,7 +29,26 @@ const cards = [
   // More items...
 ];
 
+async function getFormData(updateState:any) {
+  try {
+    const snapshot = await getDocs(colRef);
+    const formD = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    updateState(formD); // Set the form data using state update function
+  } catch (error) {
+    console.error("Error fetching form data:", error);
+    updateState([]); // or handle the error as needed by setting an empty array
+  }
+}
+
 export default function MainPage() {
+  const [formData, setFormData] = useState([]);
+
+  useEffect(() => {
+    getFormData(setFormData);
+  }, []); 
+
+  console.log(formData);
+  
   const token = localStorage.getItem("UserToken");
   if (!token) {
     return <Navigate to="/" replace />;
@@ -86,6 +111,11 @@ export default function MainPage() {
 
           <div className=" w-full md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5">
             <CreateFormButton />
+        {
+          formData.map((item)=>{
+            return (<FormDataComponent {...item}/>)
+          })
+        }
           
           </div>
         </div>

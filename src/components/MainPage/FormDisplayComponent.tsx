@@ -1,14 +1,15 @@
-import React from "react";
+import React,{useEffect} from "react";
+import { getDocs } from "firebase/firestore";
+import { colRef } from "../../../firebase-config";
+//@ts-ignore
+export default function FormDataComponent({title,published,description,createdAt}) {
 
- function FormDataComponent() {
-  let published = false;
-  let description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
   return (
     <div className="w-full bg-gray-200 p-5 flex flex-col justify-between rounded-[12px]">
       <div className=" flex justify-between items-center ">
-        <p className=" text-xl font-semibold raleway">Form Name</p>
+        <p className=" text-xl font-semibold raleway">{title}</p>
 
-        {published ? (
+        {published === false ? (
           <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-0.5 text-sm font-medium text-gray-800">
             Draft
           </span>
@@ -30,7 +31,7 @@ import React from "react";
 
       </div>
       <p className=" text-xs">10 seconds ago</p>
-      <button className=" w-full py-1 bg-primary text-secondary rounded-[8px] font-medium">
+      <button className=" w-full py-1 bg-primary text-white rounded-[8px] font-medium">
 Edit
       </button>
     </div>

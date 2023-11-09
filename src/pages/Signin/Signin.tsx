@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../../../firebase-config";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +33,6 @@ export default function Signin() {
     setLoggedUser(currentUser);
   });
 
-
   const [loading, setLoading] = useState<Boolean>(false);
 
   const signin = async (email: string, password: string) => {
@@ -45,13 +44,12 @@ export default function Signin() {
       );
       const user = userCredential?.user;
       if (user) {
-        localStorage.setItem("UserId",user?.uid);
-  
+        localStorage.setItem("UserId", user?.uid);
+
         const idToken = await user.getIdToken();
-      
-        localStorage.setItem("UserToken",idToken)
+
+        localStorage.setItem("UserToken", idToken);
         navigate("/home");
-        
       }
     } catch (error: any) {
       toast.error(error.message, {
@@ -108,9 +106,9 @@ export default function Signin() {
                 <div className="flex items-center justify-end">
                   <div className="text-sm flex justify-end leading-6">
                     <button
-                  onClick={()=>{
-                    navigate('/signup')
-                  }}
+                      onClick={() => {
+                        navigate("/signup");
+                      }}
                       className="underline manrope  hover:text-primary"
                     >
                       Don't have an account?
