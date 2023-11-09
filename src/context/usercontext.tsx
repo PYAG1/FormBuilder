@@ -14,9 +14,9 @@ export const useUserAuthContext = ()=>{
 export const AuthProvider:React.FC<Provider>= ({children})=>{
 const [LoggedUser,setLoggedUser]= useState({})
 const [ISuser, ISsetUser]= useState(false)
-const [userId,setUserId]= useState("")
-const [Token,setToken]= useState("")
+
+
 
 //@ts-ignore
-return <UserAuthContext.Provider value={{LoggedUser,setLoggedUser,ISuser, ISsetUser,userId,setUserId,Token,setToken}}>{children}</UserAuthContext.Provider>
+return <UserAuthContext.Provider value={{LoggedUser,setLoggedUser,ISuser, ISsetUser}}>{children}</UserAuthContext.Provider>
 }

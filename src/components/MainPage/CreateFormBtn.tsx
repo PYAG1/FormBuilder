@@ -5,10 +5,56 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import TextField from "../../core-ui/text-field";
 import { toast } from "react-toastify";
-import {CreateForm} from "../../../actions/form"
+import { addDoc, getDocs } from "firebase/firestore";
+import { colRef } from "../../../firebase-config";
+import { useUserAuthContext } from "../../context/usercontext";
+import { useNavigate } from "react-router-dom";
+import { serverTimestamp } from "firebase/firestore";
 
 export default function CreateFormButton() {
   const [open, setOpen] = useState(false);
+
+const userId= localStorage.getItem("UserId")
+
+  function getFormData() {
+    getDocs(colRef)
+      .then((snapshot) => {
+        let formD: any[] = [];
+        snapshot.docs.forEach((doc) => {
+          formD.push({ ...doc.data(), id: doc.id });
+        });
+        console.log("apple", formD);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  getFormData();
+  console.log(serverTimestamp());
+  
+  const navigate = useNavigate();
+ const CreateFrom = (title: string, description: string, userId: any) => {
+    const formData = {
+      id: "",
+      userId: userId,
+      title: title,
+      description: description,
+      content: "",
+      published: false,
+      shareUrl: "",
+      submissions: 0,
+      visits: 0,
+      createdAt: serverTimestamp() // Use serverTimestamp() here
+  };
+   addDoc(colRef, formData)
+      .then(() => {
+        toast.success("Form has been created");
+      })
+      .catch((err) => {
+        toast.error("Error");
+      });
+  };
 
   const cancelButtonRef = useRef(null);
   const validationSchema = Yup.object().shape({
@@ -22,30 +68,19 @@ export default function CreateFormButton() {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      try {
-        const formId= await CreateForm(values)
-        setOpen(false)
-        console.log("formID",formId);
-        
-        toast.success("Form Created")
-      } catch (error) {
-        console.log(error);
-        
-        toast.error("error")
-      }
+      CreateFrom(values.title, values.description, userId);
      
-
+      setOpen(false);
+      navigate("/form");
     },
   });
-
-
 
   return (
     <div>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="relative block w-[300px] rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2"
+        className="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2"
       >
         <svg
           className="mx-auto h-12 w-12 text-gray-400"

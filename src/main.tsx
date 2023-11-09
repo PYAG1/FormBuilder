@@ -7,6 +7,7 @@ import {router} from "../routes/Routes"
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider } from './context/usercontext'
+import { FormsProvider } from './context/formcontext'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -22,8 +23,11 @@ draggable
 pauseOnHover
 theme="dark"
 />
+<FormsProvider>
 <AuthProvider>
      <RouterProvider router={router} />
      </AuthProvider>
-  </React.StrictMode>,
+     </FormsProvider>
+  </React.StrictMode>
+  ,
 )
