@@ -6,7 +6,7 @@ import {
 
 } from '@heroicons/react/24/outline'
 import CreateFormButton from '../../components/MainPage/CreateFormBtn'
-
+import {Navigate} from "react-router-dom"
 const cards = [
   { name: 'Total visits', href: '#', icon: ScaleIcon, amount: '0' },
   { name: 'Total Submission', href: '#', icon: CheckCircleIcon, amount: '0' },
@@ -16,6 +16,10 @@ const cards = [
 ]
 
 export default function MainPage() {
+  const token = localStorage.getItem("UserToken")
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
   return (
     <div className=' w-full'>
        <NavBar/> 

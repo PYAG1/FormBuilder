@@ -107,12 +107,14 @@ export default function Signin() {
                 </button>
                 <div className="flex items-center justify-end">
                   <div className="text-sm flex justify-end leading-6">
-                    <a
-                      href="#"
+                    <button
+                  onClick={()=>{
+                    navigate('/signup')
+                  }}
                       className="underline manrope  hover:text-primary"
                     >
-                      Forgot password?
-                    </a>
+                      Don't have an account?
+                    </button>
                   </div>
                 </div>
               </form>
