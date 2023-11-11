@@ -1,4 +1,5 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
+import Skeleton from "@mui/material/Skeleton";
 import NavBar from "../../components/Navigation/NavBar";
 import {
   ScaleIcon,
@@ -9,12 +10,10 @@ import {
 import CreateFormButton from "../../components/MainPage/CreateFormBtn";
 import { Navigate } from "react-router-dom";
 
-import { getDocs } from "firebase/firestore";
+import { getDocs, deleteDoc, doc } from "firebase/firestore";
 import { colRef } from "../../../firebase-config";
 import FormDataComponent from "../../components/MainPage/FormDisplayComponent";
-
-
-
+import { toast } from "react-toastify";
 
 const cards = [
   { name: "Total visits", href: "#", icon: ScaleIcon, amount: "0" },
@@ -29,30 +28,41 @@ const cards = [
   // More items...
 ];
 
-async function getFormData(updateState:any) {
-  try {
-    const snapshot = await getDocs(colRef);
-    const formD = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    updateState(formD); // Set the form data using state update function
-  } catch (error) {
-    console.error("Error fetching form data:", error);
-    updateState([]); // or handle the error as needed by setting an empty array
-  }
-}
-
 export default function MainPage() {
   const [formData, setFormData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    getFormData(setFormData);
-  }, []); 
 
-  console.log(formData);
+    async function getFormData(updateState:any) {
+      try {
+        const snapshot = await getDocs(colRef);
+        const formD = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setLoading(false);
+        updateState(formD);
+      } catch (error) {
+        toast.error("Failed to Fetch");
+        setLoading(false);
+        updateState([]);
+      }
+    }
   
-  const token = localStorage.getItem("UserToken");
-  if (!token) {
-    return <Navigate to="/" replace />;
-  }
+    const deleteForm = async (Id:string) => {
+      try {
+        // Delete the document
+        await deleteDoc(doc(colRef, Id));
+        toast.success("Form has been deleted");
+  
+        // Update state with the current data
+        getFormData(setFormData);
+      } catch (error) {
+        console.error("Delete failed", error);
+        toast.error("Delete failed");
+      }
+    };
+  
+    useEffect(() => {
+      getFormData(setFormData);
+    }, []);
 
   return (
     <div className=" w-full">
@@ -111,12 +121,24 @@ export default function MainPage() {
 
           <div className=" w-full md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5">
             <CreateFormButton />
-        {
-          formData.map((item)=>{
-            return (<FormDataComponent {...item}/>)
-          })
-        }
-          
+            {loading ? (
+              <>
+                {[1, 2, 3, 4, 5].map((item) => (
+                  <Skeleton
+                    variant="rounded"
+                    height={"180px"}
+                    animation="wave"
+                    key={item}
+                  />
+                ))}
+              </>
+            ) : formData.length === 0 ? (
+              <div>No data available</div>
+            ) : (
+              formData.map((item: any) => (
+                <FormDataComponent key={item?.id} {...item} deleteForm={deleteForm} />
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -124,40 +146,4 @@ export default function MainPage() {
   );
 }
 
-/*import React,{useEffect,useState} from 'react'
-import NavBar from '../../components/NavBar'
-import StatsCard from '../../components/StatsCard'
-import {GetFormStats} from "../../../actions/form"
 
-
-export default function MainPage() {
-
-  const [stats, setStats] = useState(null);
-  
-  async function CardStatsWrapper(){
-    const statsData= await GetFormStats()
-setStats(statsData)
-
-}
-console.log(stats);
-
-useEffect(()=>{
-CardStatsWrapper()
-
-},[])
-  return (
-    <div className=' w-full'>
-       <NavBar/> 
-       <div className="w-full min-h-screen pt-8 bg-ashbg">
-              <div className="mx-auto max-w-6xl px-4 sm:px-6  lg:px-8">
-                <h2 className="text-lg font-medium leading-6 text-gray-900">Overview</h2>
-<StatsCard/>
-              </div>
-              <div className=' w-full'>
-                
-              </div>
-              </div>
-    </div>
-  )
-}
-*/

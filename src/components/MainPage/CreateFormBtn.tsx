@@ -5,38 +5,29 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import TextField from "../../core-ui/text-field";
 import { toast } from "react-toastify";
-import { addDoc, getDocs } from "firebase/firestore";
+import { addDoc } from "firebase/firestore";
 import { colRef } from "../../../firebase-config";
-import { useUserAuthContext } from "../../context/usercontext";
 import { useNavigate } from "react-router-dom";
 import { serverTimestamp } from "firebase/firestore";
+import { onSnapshot } from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
+import { ClipLoader, RingLoader } from "react-spinners";
 
 export default function CreateFormButton() {
   const [open, setOpen] = useState(false);
+  const [loading, setloading] = useState(false);
+  const newUUID = uuidv4();
+  const userId = localStorage.getItem("UserId");
 
-const userId= localStorage.getItem("UserId")
-
-  function getFormData() {
-    getDocs(colRef)
-      .then((snapshot) => {
-        let formD: any[] = [];
-        snapshot.docs.forEach((doc) => {
-          formD.push({ ...doc.data(), id: doc.id });
-        });
-        console.log("apple", formD);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  getFormData();
-  console.log(serverTimestamp());
-  
   const navigate = useNavigate();
- const CreateFrom = (title: string, description: string, userId: any) => {
+
+  const createForm = async (
+    title: string,
+    description: string,
+    userId: any
+  ) => {
     const formData = {
-      id: "",
+      formId: newUUID,
       userId: userId,
       title: title,
       description: description,
@@ -45,22 +36,24 @@ const userId= localStorage.getItem("UserId")
       shareUrl: "",
       submissions: 0,
       visits: 0,
-      createdAt: serverTimestamp() // Use serverTimestamp() here
-  };
-   addDoc(colRef, formData)
-      .then(() => {
-        toast.success("Form has been created");
-      })
-      .catch((err) => {
-        toast.error("Error");
-      });
+      createdAt: serverTimestamp(),
+    };
+
+    try {
+      await addDoc(colRef, formData);
+    } catch (error) {
+      console.error("Error creating form:", error);
+      toast.error("Error creating form");
+    }
   };
 
   const cancelButtonRef = useRef(null);
+
   const validationSchema = Yup.object().shape({
     title: Yup.string().required("Name is required"),
     description: Yup.string(),
   });
+
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -68,13 +61,13 @@ const userId= localStorage.getItem("UserId")
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      CreateFrom(values.title, values.description, userId);
-     
+      setloading(true);
+      await createForm(values.title, values.description, userId);
       setOpen(false);
-      navigate("/form");
+      toast.success("Form created");
+      navigate(`/formbuilder/${newUUID}`);
     },
   });
-
   return (
     <div>
       <button
@@ -171,7 +164,11 @@ const userId= localStorage.getItem("UserId")
                           type="submit"
                           className="inline-flex w-full justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
                         >
-                          Create
+                          {!loading ? (
+                            "Create"
+                          ) : (
+                            <ClipLoader color="white" size={20} />
+                          )}
                         </button>
                         <button
                           type="button"

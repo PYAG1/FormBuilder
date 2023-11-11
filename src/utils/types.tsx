@@ -2,9 +2,9 @@
 
 export interface Form  {
     content: string
-    createdAt: any
+    createdAt?: any
     description: string
-    id:any
+    formId:any
     published: boolean
     shareUrl: string
     submissions: number
