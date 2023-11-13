@@ -1,10 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import Signup from "../src/pages/Signup";
-import Signin from "../src/pages/Signin/Signin";
-import MainPage from "../src/pages/MainPage/MainPage";
-import Form from "../src/pages/Form/Form";
+import Signin from "../src/pages/Signin";
+import MainPage from "../src/pages/MainPage";
 import ProtectedRoute from "../src/utils/ProtectedRoute";
+import FormPage from "../src/pages/Form";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +25,6 @@ export const router = createBrowserRouter([
   },
   {
     path: "/formbuilder/:id",
-    element: <Form />,
+    element: <FormPage/>
   },
 ]);

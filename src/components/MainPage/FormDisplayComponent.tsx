@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import { deleteDoc,doc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { deleteDoc, doc } from "firebase/firestore";
 
 import { useNavigate } from "react-router-dom";
-import {MdOutlineDeleteOutline} from "react-icons/md"
+import { MdOutlineDeleteOutline } from "react-icons/md";
 import { colRef } from "../../../firebase-config";
 import { toast } from "react-toastify";
 //@ts-ignore
@@ -13,11 +13,28 @@ export default function FormDataComponent({
   published,
   description,
   createdAt,
-  deleteForm
-}:any) {
-  const nav= useNavigate()
+  deleteForm,
+}: any) {
+  const nav = useNavigate();
 
-  
+  console.log(createdAt.seconds);
+
+  function formatSecondsToDate(createdAtTIme:number) {
+    const diff = createdAtTIme * 1000;
+
+    const dateObject = new Date(diff);
+
+    // Options for formatting the date
+    const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+
+    // Use toLocaleDateString to get the formatted date
+    const formattedDate = dateObject.toLocaleDateString(undefined, options);
+
+    return formattedDate;
+  }
+const [loading,setLoading]=useState(false)
+  // Example usage:
+
   return (
     <div className="w-full bg-gray-200 p-5 flex flex-col justify-between rounded-[12px]">
       <div className=" flex justify-between items-center ">
@@ -43,20 +60,28 @@ export default function FormDataComponent({
       <div className="w-full h-10 manrope text-sm overflow-hidden">
         {description}
       </div>
-      <p className=" text-xs mb-2">10 seconds ago</p>
+      <p className=" text-xs mb-2">{formatSecondsToDate(createdAt?.seconds)}</p>
       {!published ? (
-<div className=" w-full flex justify-between">
-<button className=" w-[80%] py-1 bg-primary text-white rounded-[8px] font-medium" onClick={()=>{
-          nav(`/formbuilder/${formId}`)
-        }}>
-          Edit
-        </button>
+        <div className=" w-full flex justify-between">
+          <button
+            className=" w-[80%] py-1 bg-primary text-white rounded-[8px] font-medium"
+            onClick={() => {
+              nav(`/formbuilder/${formId}`);
+            }}
+          >
+            Edit
+          </button>
 
-        <button title="delete" className=" flex justify-center items-center w-[15%] bg-secondary text-primary rounded-[8px] " onClick={() => deleteForm(id)}>
-
-        <p><MdOutlineDeleteOutline size={20} /></p>
-        </button>
-  </div>
+          <button
+            title="delete"
+            className=" flex justify-center items-center w-[15%] bg-secondary text-primary rounded-[8px] "
+            onClick={() => deleteForm(id)}
+          >
+            <p>
+              <MdOutlineDeleteOutline size={20} />
+            </p>
+          </button>
+        </div>
       ) : (
         <button className=" w-full py-1 bg-primary text-white rounded-[8px] ">
           View Submissions
