@@ -5,6 +5,7 @@ import Signin from "../src/pages/Signin";
 import MainPage from "../src/pages/MainPage";
 import ProtectedRoute from "../src/utils/ProtectedRoute";
 import FormPage from "../src/pages/Form";
+import Blankindex from "../src/pages/blankDelete";
 
 export const router = createBrowserRouter([
   {
@@ -26,5 +27,9 @@ export const router = createBrowserRouter([
   {
     path: "/formbuilder/:id",
     element: <FormPage/>
+  },
+  {
+    path: "/blank",
+    element: <Blankindex/>
   },
 ]);

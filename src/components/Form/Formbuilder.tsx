@@ -4,7 +4,7 @@ import FormBuilderSideBar from "./FormBuilderSideBar";
 import { useDroppable } from "@dnd-kit/core";
 
 export default function Formbuilder(props: Form | null) {
-  const [elements,setElement]= useState<FormElementInstance[]>([])
+  
   const droppable = useDroppable({
     id: "designer-drop-area",
     data: {
