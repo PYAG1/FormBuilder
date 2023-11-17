@@ -2,17 +2,23 @@ import React, { useState } from "react";
 import {
   ElementType,
   Form,
-  FormElement,
   FormElementInstance,
   FormElements,
 } from "../../utils/types";
 import FormBuilderSideBar from "./FormBuilderSideBar";
-import { DragEndEvent, useDndMonitor, useDroppable } from "@dnd-kit/core";
-import { useUserFormContext } from "../../context/formcontext"
+import {
+  DragEndEvent,
+  useDndMonitor,
+  useDraggable,
+  useDroppable,
+} from "@dnd-kit/core";
+
 import { useBuilderContext } from "../../context/designerContext";
+import { FaTrash } from "react-icons/fa";
 
 export default function Formbuilder(props: Form | null) {
   const { elements, addElement }: any = useBuilderContext();
+
   const droppable = useDroppable({
     id: "designer-drop-area",
     data: {
@@ -56,7 +62,7 @@ export default function Formbuilder(props: Form | null) {
           )}
           {elements.length > 0 && (
             <div className=" flex flex-col gap-4 p-2 ">
-              {elements.map((item) => {
+              {elements.map((item: any) => {
                 return <DesignerElementWrapper key={item.id} element={item} />;
               })}
             </div>
@@ -71,7 +77,84 @@ export default function Formbuilder(props: Form | null) {
 }
 
 function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
+  const [mouseIsOver, setMouseIsOver] = useState<boolean>(false);
+  const topHalf = useDroppable({
+    id: element.id + "-top",
+    data: {
+      type: element.type,
+      elementId: element.id,
+      isTopHalfDesignerElement: true,
+    },
+  });
+
+  const BottomHalf = useDroppable({
+    id: element.id + "-bottom",
+    data: {
+      type: element.type,
+      elementId: element.id,
+      isBottomHalfDesignerElement: true,
+    },
+  });
+
+  const draggable = useDraggable({
+    id: element.id + "-drag-hnadler",
+    data: {
+      type: element.type,
+      elementId: element.id,
+      isDesignerElement: true,
+    },
+  });
+  const { removeElement }: any = useBuilderContext();
+
   const DesignerElement = FormElements[element.type].designerComponet;
 
-  return <DesignerElement elementInstance={element} />;
+  return (
+    <div
+      className="relative h-[120px] flex flex-col hover:cursor-pointer rounded-md ring-1 ring-primary ring-inset"
+      onMouseEnter={() => {
+        setMouseIsOver(true);
+      }}
+      onMouseLeave={() => {
+        setMouseIsOver(false);
+      }}
+      ref={draggable.setNodeRef}
+      {...draggable.listeners}
+      {...draggable.attributes}
+    >
+      <div
+        ref={topHalf.setNodeRef}
+        className="absolute w-full h-1/2 rounded-md"
+      ></div>
+      <div
+        ref={BottomHalf.setNodeRef}
+        className="absolute w-full h-1/2 bottom-0 rounded-b-md"
+      ></div>
+      {mouseIsOver && (
+        <>
+          <div className="absolute right-0 h-full">
+            <button
+              title="delete"
+              className="flex w-[50px] justify-center items-center h-full border rounded-md rounded-l-none bg-red-500"
+              onClick={() => {
+                removeElement(element.id);
+              }}
+            >
+              <FaTrash />
+            </button>
+          </div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse">
+            <p className="text-sm">Click for properties or drag to move</p>
+          </div>
+        </>
+      )}
+
+      <div
+        className={`flex w-full h-[120px] items-center rounded-md py-2 pointer-events-none ${
+          mouseIsOver && "opacity-30"
+        }`}
+      >
+        <DesignerElement elementInstance={element} />
+      </div>
+    </div>
+  );
 }

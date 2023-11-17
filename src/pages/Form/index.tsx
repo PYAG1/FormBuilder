@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getDocs, collection, query, where } from "firebase/firestore";
 import { colRef } from "../../../firebase-config";
-import NavBar from "../../components/Navigation/NavBar";
 import { useUserFormContext } from "../../context/formcontext";
 import { Form } from "../../utils/types";
 import { MdArrowLeft } from "react-icons/md";
