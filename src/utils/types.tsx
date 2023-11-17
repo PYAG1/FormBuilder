@@ -24,7 +24,7 @@ export type FormElement= {
     designerBtnElement:{
         icon:React.ElementType;label:string
     }
-    designerComponet:React.FC 
+    designerComponet:React.FC <{elementInstance:FormElementInstance}>
     formComponent:React.FC,
     propComponent:React.FC
 }

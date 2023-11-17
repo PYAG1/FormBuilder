@@ -28,8 +28,9 @@ export const router = createBrowserRouter([
     path: "/formbuilder/:id",
     element: <FormPage/>
   },
-  {
+
+]);
+/*  {
     path: "/blank",
     element: <Blankindex/>
-  },
-]);
+  },*/

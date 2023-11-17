@@ -7,7 +7,8 @@ interface DesignerContextType{
 }
 
  const BuilderContext= createContext<DesignerContextType | null>(null)
-const useBuilderContext = ()=>{
+ 
+export const useBuilderContext = ()=>{
     return useContext(BuilderContext)
 }
 
