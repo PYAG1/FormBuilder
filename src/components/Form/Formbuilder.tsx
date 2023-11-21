@@ -17,7 +17,7 @@ import { useBuilderContext } from "../../context/designerContext";
 import { FaTrash } from "react-icons/fa";
 
 export default function Formbuilder(props: Form | null) {
-  const { elements, addElement }: any = useBuilderContext();
+  const { elements, addElement, selectedElement,setSelectedElement}: any = useBuilderContext();
 
   const droppable = useDroppable({
     id: "designer-drop-area",
@@ -43,11 +43,14 @@ export default function Formbuilder(props: Form | null) {
     },
   });
 
-  console.log("apple", elements);
+  console.log("apple",selectedElement);
 
   return (
     <div className="grid md:grid-cols-[2.5fr,1.5fr] lg:grid-cols-[3fr,1fr] w-full h-full ">
-      <div className="  h-full md:p-5   ">
+      <div className="  h-full md:p-5   "
+      onClick={()=>{
+  setSelectedElement(null)
+      }}>
         <div
           ref={droppable.setNodeRef}
           className={`overflow-y-auto w-full h-full bg-gray-200 ${
@@ -55,7 +58,7 @@ export default function Formbuilder(props: Form | null) {
           }`}
         >
           {!droppable?.isOver && elements.length === 0 && <p>Drop Here</p>}
-          {droppable.isOver && (
+          {droppable.isOver && elements.length === 0  && (
             <div className="w-full p-4">
               <div className="h-[120px] rounded-md bg-primary/20"></div>
             </div>
@@ -104,10 +107,14 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
       isDesignerElement: true,
     },
   });
-  const { removeElement }: any = useBuilderContext();
+
+  if(draggable.isDragging) return null;
+  const { removeElement ,selectedElement,setSelectedElement}: any = useBuilderContext();
 
   const DesignerElement = FormElements[element.type].designerComponet;
 
+  console.log("selected",selectedElement)
+  
   return (
     <div
       className="relative h-[120px] flex flex-col hover:cursor-pointer rounded-md ring-1 ring-primary ring-inset"
@@ -120,6 +127,10 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
       ref={draggable.setNodeRef}
       {...draggable.listeners}
       {...draggable.attributes}
+      onClick={(e)=>{
+        e.stopPropagation()
+        setSelectedElement(element)
+      }}
     >
       <div
         ref={topHalf.setNodeRef}
@@ -135,7 +146,8 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
             <button
               title="delete"
               className="flex w-[50px] justify-center items-center h-full border rounded-md rounded-l-none bg-red-500"
-              onClick={() => {
+              onClick={(e) => {
+e.stopPropagation()
                 removeElement(element.id);
               }}
             >
@@ -148,13 +160,27 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
         </>
       )}
 
+
+{
+  topHalf.isOver && (
+    <div className=" absolute top-0 w-full rounded-md h-[3px] bg-primary">
+      </div>
+  )
+}
       <div
         className={`flex w-full h-[120px] items-center rounded-md py-2 pointer-events-none ${
           mouseIsOver && "opacity-30"
-        }`}
+        } 
+        `}
       >
         <DesignerElement elementInstance={element} />
       </div>
+      {
+  BottomHalf.isOver && (
+    <div className=" absolute bottom-0 w-full rounded-md h-[3px] bg-primary">
+      </div>
+  )
+}
     </div>
   );
 }

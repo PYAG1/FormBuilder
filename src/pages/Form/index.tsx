@@ -9,9 +9,8 @@ import SaveBtn from "../../components/Form/SaveBtn";
 import PreviewBtn from "../../components/Form/PreviewBtn";
 import PublishFormBtn from "../../components/Form/PublishFormBtn";
 import Formbuilder from "../../components/Form/Formbuilder";
-import {DndContext} from '@dnd-kit/core';
+import { DndContext, MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import DragOverlayWrapper from "../../components/Form/DragOverlayWrapper";
-
 
 const FormPage = () => {
   const [formData, setFormData] = useState<Form | null>(null);
@@ -46,10 +45,21 @@ const FormPage = () => {
     getDataByIdAndUserId(id, userId);
   }, [id, userId]);
 
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 10,
+    },
+  });
+  const touchSensor = useSensor(TouchSensor,{
+    activationConstraint:{
+      delay:300,
+      tolerance:5
+    }
+  })
+  const sensors = useSensors(mouseSensor,touchSensor);
+
   return (
     <div className="h-screen flex flex-col">
-
-
       {/* Header Section */}
       <div className="p-2 w-full flex justify-between items-center bg-white shadow-md">
         <div className="flex gap-3 items-center">
@@ -74,12 +84,10 @@ const FormPage = () => {
 
       {/* Main Content Section */}
       <div className="flex w-full items-center justify-center flex-1 ">
-<DndContext>
-<Formbuilder {...formData}/>
-<DragOverlayWrapper/>
-</DndContext>
-
-
+        <DndContext sensors={sensors}>
+          <Formbuilder {...formData} />
+          <DragOverlayWrapper />
+        </DndContext>
       </div>
     </div>
   );
