@@ -149,6 +149,7 @@ function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
               onClick={(e) => {
 e.stopPropagation()
                 removeElement(element.id);
+                setSelectedElement(null)
               }}
             >
               <FaTrash />

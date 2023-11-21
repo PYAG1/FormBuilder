@@ -23,11 +23,12 @@ export type FormElement= {
     construct:(id:string)=> FormElementInstance
     designerBtnElement:{
         icon:React.ElementType;label:string
-    }
+    } 
     designerComponet:React.FC <{elementInstance:FormElementInstance}>
     formComponent:React.FC,
-    propComponent:React.FC
+    propComponent:React.FC<{elementInstance:FormElementInstance}>
 }
+
 export type FormElementInstance={
     id:string;
     type:ElementType

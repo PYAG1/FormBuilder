@@ -8,6 +8,7 @@ interface DesignerContextType {
   removeElement: (id: string) => void;
   selectedElement:FormElementInstance | null;
   setSelectedElement:React.Dispatch<React.SetStateAction<FormElementInstance | null>>
+  updateElement:(id:string,element:FormElementInstance)=>void
 }
 
 const BuilderContext = createContext<DesignerContextType | null>(null);
@@ -19,6 +20,14 @@ export const useBuilderContext = () => {
 export const BuilderProvider = ({ children }: { children: ReactNode }) => {
   const [elements, setElement] = useState<FormElementInstance[]>([]);
   const [selectedElement,setSelectedElement]= useState<FormElementInstance | null>(null)
+  const  updateElement = (id:string,element:FormElementInstance)=>{
+    setElement((prev)=>{
+      const newElements = [...prev]
+      const index= newElements.findIndex(el => el.id === id)
+      newElements[index]= element
+      return newElements
+    })
+  }
   const addElement = (index: number, element: FormElementInstance) => {
     setElement((prev) => {
       const newElements = [...prev];
@@ -32,7 +41,7 @@ export const BuilderProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <BuilderContext.Provider value={{ elements, addElement, removeElement,selectedElement,setSelectedElement }}>
+    <BuilderContext.Provider value={{ elements, addElement, removeElement,selectedElement,setSelectedElement,updateElement }}>
       {children}
     </BuilderContext.Provider>
   );
