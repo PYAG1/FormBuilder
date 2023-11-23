@@ -9,7 +9,7 @@ export default function ElementPropertySidebar() {
 
     const PropForm = FormElements[selectedElement?.type].propComponent
   return (
-    <div>
+    <div className='w-full'>
   
     <div className=' w-full flex justify-between p-2'>
     <p className='raleway font-medium text-2xl'>Element Properties</p>
@@ -18,6 +18,9 @@ export default function ElementPropertySidebar() {
         }}>
             <AiOutlineClose/>
         </button>
+    </div>
+    <div className=' w-[100%] border-b-4 mb-3 '>
+
     </div>
 <PropForm elementInstance={selectedElement}/>
 </div>

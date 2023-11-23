@@ -4,6 +4,7 @@ import { Dispatch } from "react";
 
 interface DesignerContextType {
   elements: FormElementInstance[];
+  setElement:Dispatch<React.SetStateAction<FormElementInstance[]>>
   addElement: (index: number, element: FormElementInstance) => void;
   removeElement: (id: string) => void;
   selectedElement:FormElementInstance | null;
@@ -41,7 +42,7 @@ export const BuilderProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <BuilderContext.Provider value={{ elements, addElement, removeElement,selectedElement,setSelectedElement,updateElement }}>
+    <BuilderContext.Provider value={{ elements, addElement, removeElement,selectedElement,setSelectedElement,updateElement,setElement}}>
       {children}
     </BuilderContext.Provider>
   );

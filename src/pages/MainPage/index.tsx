@@ -16,18 +16,7 @@ import FormDataComponent from "../../components/MainPage/FormDisplayComponent";
 import { toast } from "react-toastify";
 import StatsCard from "../../components/MainPage/StatsCard";
 
-const cards = [
-  { name: "Total Forms", href: "#", icon: ScaleIcon, amount: "0" },
-  { name: "Total Submission", href: "#", icon: CheckCircleIcon, amount: "0" },
-  {
-    name: "Total visits",
-    href: "#",
-    icon: ArrowTrendingUpIcon,
-    amount: "0",
-  },
-  { name: "Bounce rate", href: "#", icon: ArrowTrendingDownIcon, amount: "0" },
-  // More items...
-];
+
 
 export default function MainPage() {
   const [formData, setFormData] = useState([]);
