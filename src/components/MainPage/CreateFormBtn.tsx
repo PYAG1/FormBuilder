@@ -33,7 +33,7 @@ export default function CreateFormButton() {
       description: description,
       content: "",
       published: false,
-      shareUrl: "",
+      shareUrl: `${newUUID}share`,
       submissions: 0,
       visits: 0,
       createdAt: serverTimestamp(),

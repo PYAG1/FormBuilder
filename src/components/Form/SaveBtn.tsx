@@ -5,14 +5,16 @@ import { colRef } from '../../../firebase-config';
 import {  ClipLoader } from 'react-spinners';
 import { useUserFormContext } from '../../context/formcontext';
 import { toast } from 'react-toastify';
+import { FormBtnProps } from '../../utils/types';
 
-export default function SaveBtn({ formId }: { formId: string }) {
+
+const SaveBtn:React.FC<FormBtnProps>=({ formId }: { formId: string | undefined }) =>{
   const { elements } = useBuilderContext();
   const { userId }: any = useUserFormContext();
 
   const [loading, setLoading] = useState(false);
 
-  const UpdateFormContent = async (id: string, data: string) => {
+  const UpdateFormContent = async (id: string | undefined, data: string) => {
     try {
       setLoading(true);
 
@@ -59,3 +61,5 @@ export default function SaveBtn({ formId }: { formId: string }) {
     </>
   );
 }
+
+export default SaveBtn;

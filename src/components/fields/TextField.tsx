@@ -6,7 +6,7 @@ import {
 } from "../../utils/types";
 import { useFormik } from "formik";
 import * as Yup from "yup"
-import {useEffect} from "react"
+import {useEffect, useState} from "react"
 import { useBuilderContext } from "../../context/designerContext";
 import TextField from "../../core-ui/text-field";
 
@@ -67,11 +67,15 @@ function DesignerComponent({
 
 function FormComponent({ 
   elementInstance,
+  submitValue
 }: {
   elementInstance: FormElementInstance;
+  submitValue:any
 }) {
   const element = elementInstance as CustomInstance;
   const { label, placeholder, required, helperText } = element.extra;
+
+  const {value,setValue} = useState("")
   return (
     <div className=" text-primary manrope bg-white flex flex-col gap-2 w-full p-2 mb-2 ">
       <label className=" capitalize text-xl ">
@@ -81,7 +85,13 @@ function FormComponent({
       <input
         className="border w-full border-gray-300 text-base font-normal placeholder:text-gray-400 rounded-md  ring-primary focus:ring-primary focus:border-primary pl-4 py-2"
         type={type}
-      
+      onChange={(e)=>{
+setValue(e.target.validationMessage)
+      }}
+      onBlur={(e)=>{
+        if(!submitValue)return;
+        submitValue(element.id,e.target.value)
+      }}
         placeholder={placeholder}
       />
       {helperText && <p className="text-sm">{helperText}</p>}

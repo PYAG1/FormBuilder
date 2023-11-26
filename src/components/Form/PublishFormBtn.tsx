@@ -2,16 +2,27 @@ import React from "react";
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { colRef } from '../../../firebase-config';
+import {toast} from "react-toastify";
 import { getDocs, query, where, updateDoc } from 'firebase/firestore';
 import {
   ExclamationTriangleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-export default function PublishFormBtn() {
+import { FormBtnProps } from "../../utils/types";
+import {  ClipLoader } from 'react-spinners';
+import { useUserFormContext } from "../../context/formcontext";
+import { useNavigate } from "react-router-dom";
+
+
+
+const PublishFormBtn: React.FC<FormBtnProps> = ({ formId }) => {
   const [open, setOpen] = useState(false);
+const {userId}:any = useUserFormContext()
+const navigate = useNavigate()
+
 
   const [loading, setLoading] = useState(false);
-  const Publsh = async (id: string, data: string) => {
+  const PublshForm = async (id: string| undefined) => {
     try {
       setLoading(true);
 
@@ -26,17 +37,24 @@ export default function PublishFormBtn() {
       const documentData = querySnapshot.docs[0].ref;
 
       // Update the document with the new data
-      await updateDoc(documentData, { content: data });
+      await updateDoc(documentData, { published: true });
 
       // Replace "content" with the actual field you want to update
       setLoading(false);
-      toast.success('Form has been saved');
+      toast.success('Form has been published');
+     
+      navigate("/home")
     } catch (error) {
       setLoading(false);
       console.error('Error querying data:', error);
       throw error;
     }
   };
+
+  const publish = async ( )=>{
+    await PublshForm(formId);
+
+  }
   return (
     <>
       <button
@@ -112,9 +130,12 @@ export default function PublishFormBtn() {
                     <button
                       type="button"
                       className="inline-flex w-full justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
-                      onClick={() => setOpen(false)}
+                      onClick={() => {
+                        publish()
+                       
+                      }}
                     >
-                      Publish
+                    {loading ? (<ClipLoader color="white" size={20}/>): <p>Publish</p>}
                     </button>
                     <button
                       type="button"
@@ -133,3 +154,5 @@ export default function PublishFormBtn() {
     </>
   );
 }
+
+export default PublishFormBtn;

@@ -83,9 +83,23 @@ const [loading,setLoading]=useState(false)
           </button>
         </div>
       ) : (
-        <button className=" w-full py-1 bg-primary text-white rounded-[8px] ">
+        <div className=" flex w-full justify-between">
+        <button className=" w-[80%] py-1 bg-primary text-white rounded-[8px] "   onClick={() => {
+          nav(`/formDetails/${formId}`);
+        }}>
           View Submissions
         </button>
+        <button
+            title="delete"
+            className=" flex justify-center items-center w-[15%] bg-secondary text-primary rounded-[8px] "
+            onClick={() => deleteForm(id)}
+          >
+            <p>
+              <MdOutlineDeleteOutline size={20} />
+            </p>
+          </button>
+        </div>
+
       )}
     </div>
   );

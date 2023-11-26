@@ -1,7 +1,9 @@
 import { createContext, useContext, useState } from "react";
 import { ReactNode } from "react";
-import { getDocs } from "firebase/firestore";
 import { colRef } from "../../firebase-config";
+import { getDocs, collection, query, where } from "firebase/firestore";
+import { Form } from "../utils/types";
+
 
 export interface Provider {
     children: ReactNode;
@@ -16,10 +18,34 @@ export const useUserFormContext = ()=>{
 export const FormsProvider:React.FC<Provider>= ({children})=>{
 const [formTitle, setFormTitle]= useState("")
 const [description,setdescription]= useState("")
+const [formData, setFormData] = useState<Form | null>(null);
+const getDataByIdAndUserId = async (id: any, userId: any) => {
+  try {
+    const q = query(
+      colRef,
+      where("formId", "==", id),
+      where("userId", "==", userId)
+    );
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.size === 0) {
+      console.log("No matching documents found.");
+      return null;
+    }
+
+    const documentData = querySnapshot.docs[0].data();
+    //@ts-ignore
+    setFormData(documentData);
+    console.log("apple", documentData);
+  } catch (error) {
+    console.error("Error querying data:", error);
+    throw error;
+  }
+};
 
 const userId = localStorage.getItem("UserId");
 
 
 //@ts-ignore
-return <UserFormContext.Provider value={{formTitle,setFormTitle,setdescription,description,userId}}>{children}</UserFormContext.Provider>
+return <UserFormContext.Provider value={{formTitle,setFormTitle,setdescription,description,userId,getDataByIdAndUserId,formData}}>{children}</UserFormContext.Provider>
 }

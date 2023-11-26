@@ -25,7 +25,9 @@ export type FormElement= {
         icon:React.ElementType;label:string
     } 
     designerComponet:React.FC <{elementInstance:FormElementInstance}>,
-    formComponent:React.FC<{elementInstance:FormElementInstance}>,
+    formComponent:React.FC<{elementInstance:FormElementInstance
+        submitValue?:(key:string , value:string) =>void
+    }>,
     propComponent:React.FC<{elementInstance:FormElementInstance}>
 }
 
@@ -41,3 +43,7 @@ type FormElementsType= {
 export const FormElements:FormElementsType= {
     TextField:TextFieldFormElement
 }
+
+export interface FormBtnProps {
+    formId: string | undefined;
+  }

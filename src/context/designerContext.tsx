@@ -39,7 +39,7 @@ export const BuilderProvider = ({ children }: { children: ReactNode }) => {
 
   const removeElement = (id: string) => {
     setElement((prev) => prev.filter((element) => element.id !== id));
-  };
+  }; 
 
   return (
     <BuilderContext.Provider value={{ elements, addElement, removeElement,selectedElement,setSelectedElement,updateElement,setElement}}>
