@@ -5,10 +5,11 @@ import {
   FormElementInstance,
 } from "../../utils/types";
 import { useFormik } from "formik";
-import * as Yup from "yup"
-import {useEffect, useState} from "react"
+import * as Yup from "yup";
+import { useEffect, useState } from "react";
 import { useBuilderContext } from "../../context/designerContext";
 import TextField from "../../core-ui/text-field";
+import ExclamationCircleIcon from "@heroicons/react/24/solid/ExclamationCircleIcon";
 
 const type: ElementType = "TextField";
 
@@ -33,13 +34,24 @@ export const TextFieldFormElement: FormElement = {
   designerComponet: DesignerComponent,
   formComponent: FormComponent,
   propComponent: PropertyComponent,
+
+  validate: (
+    formElement: FormElementInstance,
+    currentValue: string
+  ): boolean => {
+    const element = formElement as CustomInstance;
+    if (element.extra.required) {
+      return currentValue.length > 0;
+    }
+    return true;
+  },
 };
 
 type CustomInstance = FormElementInstance & {
   extra: typeof extra;
 };
 
-function DesignerComponent({ 
+function DesignerComponent({
   elementInstance,
 }: {
   elementInstance: FormElementInstance;
@@ -64,49 +76,71 @@ function DesignerComponent({
   );
 }
 
-
-function FormComponent({ 
+function FormComponent({
   elementInstance,
-  submitValue
+  submitValue,
+  isInvalid,
 }: {
   elementInstance: FormElementInstance;
-  submitValue:any
+  submitValue: any;
+  isInvalid?: boolean;
 }) {
   const element = elementInstance as CustomInstance;
   const { label, placeholder, required, helperText } = element.extra;
 
-  const {value,setValue} = useState("")
+  const [value, setvalue] = useState("");
+  const [error, setError] = useState(false);
+  useEffect(() => {
+    setError(isInvalid === true);
+  }, [isInvalid]);
   return (
     <div className=" text-primary manrope bg-white flex flex-col gap-2 w-full p-2 mb-2 ">
       <label className=" capitalize text-xl ">
         {label}
         {required && "*"}
       </label>
-      <input
-        className="border w-full border-gray-300 text-base font-normal placeholder:text-gray-400 rounded-md  ring-primary focus:ring-primary focus:border-primary pl-4 py-2"
-        type={type}
-      onChange={(e)=>{
-setValue(e.target.validationMessage)
-      }}
-      onBlur={(e)=>{
-        if(!submitValue)return;
-        submitValue(element.id,e.target.value)
-      }}
-        placeholder={placeholder}
-      />
+      <div className=" relative">
+        <input
+          className={`border w-full  text-base font-normal  rounded-md  ring-primary focus:ring-primary focus:border-primary pl-4 py-2 ${error ?"border-[red] placeholder:text-red-400" :"border-gray-300 placeholder:text-gray-400"}`}
+          type={type}
+          onChange={(e) => {
+            setvalue(e.target.value);
+          }}
+          onBlur={(e) => {
+            if (!submitValue) return;
+            const valid = TextFieldFormElement.validate(
+              element,
+              e.target.value
+            );
+            setError(!valid);
+            if (!valid) return;
+            submitValue(element.id, e.target.value);
+          }}
+          placeholder={placeholder}
+          value={value}
+        />
+        {error && (
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <ExclamationCircleIcon
+              className="h-5 w-5 text-red-500"
+              aria-hidden="true"
+            />
+          </div>
+        )}
+      </div>
       {helperText && <p className="text-sm">{helperText}</p>}
     </div>
   );
 }
 
-function PropertyComponent({ 
+function PropertyComponent({
   elementInstance,
 }: {
   elementInstance: FormElementInstance;
-}){
+}) {
   const element = elementInstance as CustomInstance;
 
-const {updateElement}:any= useBuilderContext()
+  const { updateElement }: any = useBuilderContext();
 
   const validationSchema = Yup.object({
     label: Yup.string().min(4).max(50).required("Label is required"),
@@ -114,7 +148,7 @@ const {updateElement}:any= useBuilderContext()
     helperText: Yup.string().max(200),
     required: Yup.boolean(),
   });
-  
+
   const { label, placeholder, required, helperText } = element.extra;
   const formik = useFormik({
     initialValues: {
@@ -128,87 +162,83 @@ const {updateElement}:any= useBuilderContext()
       applyChanges(values);
     },
   });
-  
 
-useEffect(()=>{
+  useEffect(() => {
+    formik.resetForm();
+  }, [element]);
 
-  formik.resetForm()
+  function applyChanges(values: any) {
+    updateElement(element.id, {
+      ...element,
+      extra: {
+        label: values.label,
+        helperText: values.helperText,
+        required: values.required,
+        placeholder: values.placeholder,
+      },
+    });
+  }
 
-},[element])
+  return (
+    <div>
+      <form className="pr-5 space-y-5" onBlur={formik.handleSubmit}>
+        <div className="space-y-3">
+          <label htmlFor="label">Label</label>
+          <input
+            type="text"
+            value={formik.values.label}
+            id="label"
+            name="label"
+            onChange={formik.handleChange}
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+            className="border w-full border-gray-300 text-base font-normal placeholder:text-gray-400 rounded-md ring-primary focus:ring-primary focus:border-primary pl-4 py-2"
+          />
+          <p className=" text-xs text-gray-600">
+            This serves as the label of the text input.
+          </p>
+        </div>
 
-function applyChanges(values:any) {
-  updateElement(element.id, {
-    ...element,
-    extra: {
-      label: values.label,
-      helperText: values.helperText,
-      required: values.required,
-      placeholder: values.placeholder,
-    },
-  });
-}
+        <div className="space-y-3">
+          <label htmlFor="placeholder">Placeholder</label>
+          <input
+            type="text"
+            value={formik.values.placeholder}
+            id="placeholder"
+            onChange={formik.handleChange}
+            className="border w-full border-gray-300 text-base font-normal placeholder:text-gray-400 rounded-md ring-primary focus:ring-primary focus:border-primary pl-4 py-2"
+          />
+          <p className=" text-xs text-gray-600">
+            This is a temporary text shown in the input field when it is empty.
+          </p>
+        </div>
 
+        <div className="space-y-3">
+          <label htmlFor="helperText">Hint</label>
+          <input
+            type="text"
+            value={formik.values.helperText}
+            id="helperText"
+            onChange={formik.handleChange}
+            className="border w-full border-gray-300 text-base font-normal placeholder:text-gray-400 rounded-md ring-primary focus:ring-primary focus:border-primary pl-4 py-2"
+          />
+          <p className=" text-xs text-gray-600">
+            This provides additional information or context for the input.
+          </p>
+        </div>
 
- 
-return (
-  <div>
-  <form className="pr-5 space-y-5" onBlur={formik.handleSubmit}>
-  <div className="space-y-3">
-    <label htmlFor="label">Label</label>
-    <input
-      type="text"
-      value={formik.values.label}
-      id="label"
-      name="label"
-      onChange={formik.handleChange}
-      onSubmit={(e)=>{
-        e.preventDefault()
-      }}
- 
-      className="border w-full border-gray-300 text-base font-normal placeholder:text-gray-400 rounded-md ring-primary focus:ring-primary focus:border-primary pl-4 py-2"
-    />
-    <p className=" text-xs text-gray-600">This serves as the label of the text input.</p>
-  </div>
-
-  <div className="space-y-3">
-    <label htmlFor="placeholder">Placeholder</label>
-    <input
-      type="text"
-      value={formik.values.placeholder}
-      id="placeholder"
-      onChange={formik.handleChange}
-      className="border w-full border-gray-300 text-base font-normal placeholder:text-gray-400 rounded-md ring-primary focus:ring-primary focus:border-primary pl-4 py-2"
-    />
-    <p className=" text-xs text-gray-600">This is a temporary text shown in the input field when it is empty.</p>
-  </div>
-
-  <div className="space-y-3">
-    <label htmlFor="helperText">Hint</label>
-    <input
-      type="text"
-      value={formik.values.helperText}
-      id="helperText"
-      onChange={formik.handleChange}
-      className="border w-full border-gray-300 text-base font-normal placeholder:text-gray-400 rounded-md ring-primary focus:ring-primary focus:border-primary pl-4 py-2"
-    />
-    <p className=" text-xs text-gray-600">This provides additional information or context for the input.</p>
-  </div>
-
-<div className=" flex  gap-3">
-<label htmlFor="checkbox">Required</label>
-  <input
-    type="checkbox"
-    id="required"
-    checked={formik.values.required}
-    onChange={formik.handleChange}
-  />
-</div>
-<button type="submit">
-  Update
-</button>
-</form>
-
-     
-  </div>
-)
+        <div className=" flex  gap-3">
+          <label htmlFor="checkbox">Required</label>
+          <input
+            type="checkbox"
+            id="required"
+            checked={formik.values.required}
+            onChange={formik.handleChange}
+          />
+        </div>
+        <button type="submit">Update</button>
+      </form>
+    </div>
+  );
 }

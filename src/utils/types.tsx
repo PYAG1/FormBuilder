@@ -3,7 +3,7 @@ import { TextFieldFormElement } from "../components/fields/TextField"
 
 export interface Form  {
     content: string
-    createdAt?: any
+    createdAt?: any 
     description: string
     formId:any
     published: boolean
@@ -25,10 +25,13 @@ export type FormElement= {
         icon:React.ElementType;label:string
     } 
     designerComponet:React.FC <{elementInstance:FormElementInstance}>,
-    formComponent:React.FC<{elementInstance:FormElementInstance
-        submitValue?:(key:string , value:string) =>void
+    formComponent:React.FC<{elementInstance:FormElementInstance;
+        submitValue?:(key:string , value:string) =>void;
+        isInvalid?: boolean
     }>,
     propComponent:React.FC<{elementInstance:FormElementInstance}>
+
+    validate:(formElement:FormElementInstance,currentValue:string)=> boolean
 }
 
 export type FormElementInstance={
