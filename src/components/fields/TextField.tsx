@@ -80,15 +80,17 @@ function FormComponent({
   elementInstance,
   submitValue,
   isInvalid,
+  defaultValue
 }: {
   elementInstance: FormElementInstance;
   submitValue: any;
   isInvalid?: boolean;
+  defaultValue?:string
 }) {
   const element = elementInstance as CustomInstance;
   const { label, placeholder, required, helperText } = element.extra;
 
-  const [value, setvalue] = useState("");
+  const [value, setvalue] = useState(defaultValue || "");
   const [error, setError] = useState(false);
   useEffect(() => {
     setError(isInvalid === true);
@@ -107,7 +109,7 @@ function FormComponent({
             setvalue(e.target.value);
           }}
           onBlur={(e) => {
-            if (!submitValue) return;
+            if (!submitValue) return; 
             const valid = TextFieldFormElement.validate(
               element,
               e.target.value

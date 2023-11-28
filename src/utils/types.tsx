@@ -27,7 +27,8 @@ export type FormElement= {
     designerComponet:React.FC <{elementInstance:FormElementInstance}>,
     formComponent:React.FC<{elementInstance:FormElementInstance;
         submitValue?:(key:string , value:string) =>void;
-        isInvalid?: boolean
+        isInvalid?: boolean;
+        defaultValue?:string
     }>,
     propComponent:React.FC<{elementInstance:FormElementInstance}>
 

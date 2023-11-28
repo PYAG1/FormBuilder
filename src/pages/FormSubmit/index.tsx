@@ -104,6 +104,7 @@ export default function FormSubmit() {
                 elementInstance={ele}
                 submitValue={submitValue}
                 isInvalid={formErrors.current[ele.id]}
+                defaultValue={formValues.current[ele.id]}
               />
             );
           })}
