@@ -12,33 +12,14 @@ import { PuffLoader } from 'react-spinners';
 
 
 export default function StatsCard({}) {
-const {userId}:any= useUserFormContext()
+const {userId,fetchStatsData,StatsLoading,setStatsLoading,setTotalForms,totalForms,totalSubmissions,totalVisits,bounceRate}:any= useUserFormContext()
 
-const [loading,setLoading]= useState(true)
-  const [totalForms, setTotalForms] = useState(0);
-  const [totalSubmissions, setTotalSubmissions] = useState(0);
-  const [totalVisits, setTotalVisits] = useState(0);
-  const [bounceRate, setBounceRate] = useState(0);
+
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
 
-        const totalFormsQuery = query(colRef, where('userId', '==', userId));
-        const totalFormsSnapshot = await getCountFromServer(totalFormsQuery);
-        setLoading(false)
-        setTotalForms(totalFormsSnapshot.data().count);
-
-        // Fetch and set data for other stats in a similar way
-        // ...
-
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, [colRef]);
+    fetchStatsData();
+  }, []);
 
   console.log(totalForms);
   
@@ -74,7 +55,7 @@ const [loading,setLoading]= useState(true)
                         <dd>
                           <div className="text-lg font-medium text-gray-900">
                           {
-                            loading ? (<PuffLoader size={30}/>):   card.amount
+                            StatsLoading ? (<PuffLoader size={30}/>):   card.amount
                           }
                           </div>
                         </dd>

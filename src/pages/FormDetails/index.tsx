@@ -34,6 +34,8 @@ export default function FormDetails() {
   console.log(formData);
 
   const shareUrl = `${window.location.origin}/submit/${formData?.shareUrl}`;
+  console.log(shareUrl);
+  
 
   return (
     <div className="w-full">
@@ -75,7 +77,7 @@ export default function FormDetails() {
         <FormDetailStats formData={formData} loading={loading} />
 
         <div>
-          <SubmissionsTable />
+          <SubmissionsTable  />
         </div>
       </main>
     </div>

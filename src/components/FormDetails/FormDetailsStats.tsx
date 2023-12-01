@@ -38,6 +38,8 @@ export default function FormDetailStats({ formData, loading }:{formData:any,load
     },
   ];
 
+  console.log("here",formData?.shareUrl)
+
   return (
     <div className=" w-full flex justify-between gap-10">
       {cards.map((card) => (

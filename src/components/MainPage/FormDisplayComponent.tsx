@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { colRef } from "../../../firebase-config";
 import { toast } from "react-toastify";
+import { useUserFormContext } from "../../context/formcontext";
 //@ts-ignore
 export default function FormDataComponent({
   id,
@@ -18,6 +19,8 @@ export default function FormDataComponent({
   const nav = useNavigate();
 
   console.log(createdAt.seconds);
+
+  const {fetchStatsData}:any= useUserFormContext()
 
   function formatSecondsToDate(createdAtTIme:number) {
     const diff = createdAtTIme * 1000;
@@ -34,7 +37,9 @@ export default function FormDataComponent({
   }
 const [loading,setLoading]=useState(false)
   // Example usage:
-
+useEffect(()=>{
+  fetchStatsData()
+},[deleteForm])
   return (
     <div className="w-full bg-gray-200 p-5 flex flex-col justify-between rounded-[12px]">
       <div className=" flex justify-between items-center ">
@@ -92,7 +97,10 @@ const [loading,setLoading]=useState(false)
         <button
             title="delete"
             className=" flex justify-center items-center w-[15%] bg-secondary text-primary rounded-[8px] "
-            onClick={() => deleteForm(id)}
+            onClick={() =>{
+              deleteForm(id)
+            
+            }}
           >
             <p>
               <MdOutlineDeleteOutline size={20} />
