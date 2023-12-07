@@ -1,21 +1,12 @@
 import {
-  Firestore,
   addDoc,
-  collection,
-  getDoc,
   getDocs,
   increment,
   query,
   updateDoc,
   where,
 } from "firebase/firestore";
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  useTransition,
-} from "react";
+import { useEffect, useState, useRef, useCallback, useTransition } from "react";
 import { useParams } from "react-router-dom";
 import { colRef, formSubsRef } from "../../../firebase-config";
 import { useUserFormContext } from "../../context/formcontext";
@@ -30,20 +21,21 @@ export default function FormSubmit() {
     const formSubmissionData = {
       formurl: formUrl,
       content: content,
+      createdAt: new Date(), // Add the createdAt field with the current timestamp
     };
-
+  
     try {
       // Use where() to query documents with the specified shareUrl
       await addDoc(formSubsRef, formSubmissionData);
       const querySnapshot = await getDocs(
         query(colRef, where("shareUrl", "==", formUrl))
       );
-
+  
       const querySnapshotForFormSub = await getDocs(
         query(formSubsRef, where("formurl", "==", formUrl))
       );
       const allDocuments: any[] = [];
-
+  
       // Check if there are any matching documents
       if (!querySnapshot.empty && !querySnapshotForFormSub.empty) {
         const docRef = querySnapshot.docs[0].ref;
@@ -57,22 +49,20 @@ export default function FormSubmit() {
           FormSubmission: allDocuments,
         });
       }
-
-      // Check if there are any matching documents
-
-      // Add a new document with formSubmissionData
-
+  
       console.log("Form submitted successfully!");
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Error submitting form");
     }
   };
+  
 
   console.log(formurl);
   const { userId }: any = useUserFormContext();
-
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState<
+    string | FormElementInstance[] | undefined
+  >();
   const [title, settitle] = useState("");
   const [desc, setdesc] = useState("");
   const [ready, SetReady] = useState(false);
@@ -103,7 +93,7 @@ export default function FormSubmit() {
   const [pending, startTransistion] = useTransition();
 
   const validateForm = useCallback(() => {
-    for (const field of content) {
+    for (const field of content as FormElementInstance[]) {
       const actualValue = formValues.current[field?.id] || "";
       const formElementType = FormElements[field.type];
 
@@ -122,7 +112,6 @@ export default function FormSubmit() {
   }, [content]);
 
   const submitValue = (key: string, value: string) => {
-    //@ts-ignore
     formValues.current[key] = value;
   };
 
@@ -145,7 +134,6 @@ export default function FormSubmit() {
         const documentData = querySnapshot.docs[0].data();
         const docRef = querySnapshot.docs[0].ref;
 
-        //@ts-ignore
         setContent(documentData?.content);
         settitle(documentData?.title);
         setdesc(documentData?.desc);
@@ -170,7 +158,8 @@ export default function FormSubmit() {
   }, [formurl, userId]);
 
   const formContent = content
-    ? (JSON.parse(content) as FormElementInstance[])
+    ? //@ts-ignore
+      (JSON.parse(content) as FormElementInstance[])
     : [];
 
   return (

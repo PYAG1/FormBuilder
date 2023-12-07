@@ -22,19 +22,19 @@ export default function FormDataComponent({
 
   const {fetchStatsData}:any= useUserFormContext()
 
-  function formatSecondsToDate(createdAtTIme:number) {
-    const diff = createdAtTIme * 1000;
-
+  function formatSecondsToDate(createdAtTime: number) {
+    const diff = createdAtTime * 1000;
     const dateObject = new Date(diff);
-
+  
     // Options for formatting the date
-    const options = { day: "2-digit", month: "2-digit", year: "numeric" };
-
+    const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "2-digit", year: "numeric" };
+  
     // Use toLocaleDateString to get the formatted date
     const formattedDate = dateObject.toLocaleDateString(undefined, options);
-
+  
     return formattedDate;
   }
+  
 const [loading,setLoading]=useState(false)
   // Example usage:
 useEffect(()=>{

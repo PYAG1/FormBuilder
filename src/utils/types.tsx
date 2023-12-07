@@ -1,4 +1,9 @@
+import { ParagraphFieldFormElement } from "../components/fields/ParagraphField"
+import { SeparatorFieldFormElement } from "../components/fields/SeparatorField"
+import { SpacerFieldFormElement } from "../components/fields/SpaceField"
+import { SubTitleFieldFormElement } from "../components/fields/SubTitle"
 import { TextFieldFormElement } from "../components/fields/TextField"
+import { TitleFieldFormElement } from "../components/fields/TitleField"
 
 
 export interface Form  {
@@ -15,9 +20,12 @@ export interface Form  {
   
 };
 
-export type ElementType = "TextField" 
-
-
+export type ElementType = "TextField" | "TitleField" | "SubTitleField" | "ParagraphField" |"SeparatorField" |"SpacerField" | "NumberField"
+export type Row = {
+    [key: string]: any;
+    submittedAt: Date; // Assuming submittedAt is a Date property
+  };
+  
 export type FormElement= {
     type:ElementType;
     construct:(id:string)=> FormElementInstance
@@ -26,9 +34,9 @@ export type FormElement= {
     } 
     designerComponet:React.FC <{elementInstance:FormElementInstance}>,
     formComponent:React.FC<{elementInstance:FormElementInstance;
-        submitValue?:(key:string , value:string) =>void;
+        submitValue?: (key: string, value: string) => void;
         isInvalid?: boolean;
-        defaultValue?:string
+        defaultValue?: string;
     }>,
     propComponent:React.FC<{elementInstance:FormElementInstance}>
 
@@ -45,7 +53,13 @@ type FormElementsType= {
     [key in ElementType]:FormElement;
 }
 export const FormElements:FormElementsType= {
-    TextField:TextFieldFormElement
+    TextField:TextFieldFormElement,
+    TitleField:TitleFieldFormElement,
+    SubTitleField:SubTitleFieldFormElement,
+    ParagraphField:ParagraphFieldFormElement,
+    SeparatorField:SeparatorFieldFormElement,
+    SpacerField:SpacerFieldFormElement,
+    NumberField:
 }
 
 export interface FormBtnProps {

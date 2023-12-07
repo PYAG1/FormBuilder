@@ -1,57 +1,49 @@
-
 import { DocumentData, doc, getDocs, query, where } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { colRef, formSubsRef } from "../../../firebase-config";
-import { FormElementInstance } from "../../utils/types";
+import { ElementType, FormElementInstance, Row } from "../../utils/types";
 import { useParams } from "react-router-dom";
+import { formatDistance } from "date-fns";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function SubmissionsTable() {
+  const { id } = useParams();
+  console.log("this is the id", id);
 
-  const {id}= useParams();
-  console.log("this is the id",id);
-  
-  
   const [people, setPeople] = useState([]);
-  const [Form,setForm] = useState<any>()
-  const getFormWithSubmission = async (FormID: string|undefined) => {
+  const [Form, setForm] = useState<any>();
+  const getFormWithSubmission = async (FormID: string | undefined) => {
     try {
-      const q = query(colRef, where("formId", "==" ,FormID)
-  
-      );
+      const q = query(colRef, where("formId", "==", FormID));
       const querySnapshot = await getDocs(q);
-  
+
       if (querySnapshot.size === 0) {
         console.log("No matching documents found.");
         return null;
       }
-  
-      const documentData = querySnapshot.docs[0].data()
 
+      const documentData = querySnapshot.docs[0].data();
 
-     setForm(documentData)
-     console.log("Form",Form);
-     
-
+      setForm(documentData);
+      console.log("Form", Form);
     } catch (error) {
       console.error("Error getting documents: ", error);
       // You might want to handle the error appropriately, e.g., throw it or log it.
     }
   };
-  
-  useEffect(()=>{
-    getFormWithSubmission(id)
-  },[])
 
+  useEffect(() => {
+    getFormWithSubmission(id);
+  }, []);
 
-  const formElement = JSON.parse(Form?.content || "[]") as FormElementInstance[];
+  const formElement = JSON.parse(
+    Form?.content || "[]"
+  ) as FormElementInstance[];
 
-
-  console.log("nice",formElement)
-
+  console.log("nice", formElement);
 
   const columns: {
     id: string;
@@ -59,7 +51,6 @@ export default function SubmissionsTable() {
     required: boolean;
     type: any;
   }[] = [];
-
 
   formElement.forEach((element) => {
     switch (element.type) {
@@ -76,10 +67,13 @@ export default function SubmissionsTable() {
     }
   });
 
+  const rows: Row[] = [];
 
-  
-
-  console.log("jnjn",people);
+  console.log("here", Form?.FormSubmission[0].createdAt.seconds);
+  Form?.FormSubmission.forEach((sub: any) => {
+    const content = JSON.parse(sub?.content);
+    rows.push({ ...content, submittedAt: sub?.createdAt.seconds });
+  });
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
@@ -108,89 +102,53 @@ export default function SubmissionsTable() {
                 className="min-w-full border-separate"
                 style={{ borderSpacing: 0 }}
               >
-<thead className="bg-gray-50">
-  <tr>
-    {columns.map((column) => (
-      <th
-        key={column.id}
-        scope="col"
-        className="sticky top-0 z-10 border-b border-gray-300 bg-gray-50 bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
-      >
-        {column.label}
-      </th>
-    ))}
- 
+                <thead className="bg-gray-50">
+                  <tr>
+                    {columns.map((column) => (
+                      <th
+                        key={column.id}
+                        scope="col"
+                        className="sticky top-0 z-10 border-b border-gray-300 bg-gray-50 bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
+                      >
+                        {column.label}
+                      </th>
+                    ))}
 
-    <th
-      key={7}
-      scope="col"
-      className="sticky top-0 z-10 border-b border-gray-300 bg-gray-50 bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
-    >
-      Submitted At
-    </th>
-    </tr>
-</thead>
-
-
+                    <th
+                      key={7}
+                      scope="col"
+                      className="sticky top-0 z-10 border-b border-gray-300 bg-gray-50 bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
+                    >
+                      Submitted At
+                    </th>
+                  </tr>
+                </thead>
 
                 <tbody className="bg-white">
-                  {people.map((person, personIdx) => (
-                    <tr key={person?.email}>
-                      <td
-                        className={classNames(
-                          personIdx !== people.length - 1
-                            ? "border-b border-gray-200"
-                            : "",
-                          "whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8"
-                        )}
-                      >
-                        {person?.name}
-                      </td>
-                      <td
-                        className={classNames(
-                          personIdx !== people.length - 1
-                            ? "border-b border-gray-200"
-                            : "",
-                          "whitespace-nowrap px-3 py-4 text-sm text-gray-500 hidden sm:table-cell"
-                        )}
-                      >
-                        {person?.title}
-                      </td>
-                      <td
-                        className={classNames(
-                          personIdx !== people.length - 1
-                            ? "border-b border-gray-200"
-                            : "",
-                          "whitespace-nowrap px-3 py-4 text-sm text-gray-500 hidden lg:table-cell"
-                        )}
-                      >
-                        {person?.email}
-                      </td>
-                      <td
-                        className={classNames(
-                          personIdx !== people.length - 1
-                            ? "border-b border-gray-200"
-                            : "",
-                          "whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                        )}
-                      >
-                        {person?.role}
-                      </td>
-                      <td
-                        className={classNames(
-                          personIdx !== people.length - 1
-                            ? "border-b border-gray-200"
-                            : "",
-                          "relative whitespace-nowrap py-4 pr-4 pl-3 text-right text-sm font-medium sm:pr-6 lg:pr-8"
-                        )}
-                      >
-                        <a
-                          href="#"
-                          className="text-indigo-600 hover:text-indigo-900"
-                        >
-                          Edit<span className="sr-only">, {person.name}</span>
-                        </a>
-                      </td>
+                  {rows.map((sub, subIdx) => (
+                    <tr key={subIdx * Math.random()}>
+                      {columns.map((item) => (
+                        <RowCell
+                          key={item.id}
+                          type={item.type}
+                          value={sub[item.id]}
+                        />
+                      ))}
+      <td
+  className={classNames(
+    subIdx !== rows.length - 1 ? "border-b border-gray-200" : "",
+    "whitespace-nowrap px-3 py-4 text-sm text-gray-500 hidden sm:table-cell"
+  )}
+>
+  {sub?.submittedAt
+    ? formatDistance(
+        new Date(sub?.submittedAt * 1000), // Convert seconds to milliseconds
+        new Date(),
+        { addSuffix: true }
+      )
+    : ''}
+</td>
+
                     </tr>
                   ))}
                 </tbody>
@@ -201,4 +159,9 @@ export default function SubmissionsTable() {
       </div>
     </div>
   );
+}
+
+function RowCell({ type, value }: { type: ElementType; value: string }) {
+  let node: ReactNode = value;
+  return <td>{node}</td>;
 }

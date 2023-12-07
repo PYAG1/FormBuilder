@@ -11,16 +11,16 @@ import { useEffect, useState,useTransition } from "react";
 import { useBuilderContext } from "../../context/designerContext";
 import ExclamationCircleIcon from "@heroicons/react/24/solid/ExclamationCircleIcon";
 
-const type: ElementType = "TextField";
+const type: ElementType = "NumberField";
 
 const extra = {
-  label: "TextField",
-  placeholder: "Enter a Text",
-  helperText: "This is a text field",
+  label: "NumberField",
+  placeholder: "0",
+  helperText: "This is a number field",
   required: false,
 };
 
-export const TextFieldFormElement: FormElement = {
+export const NumberFieldFormElement: FormElement = {
   type,
   construct: (id: string) => ({
     id,
