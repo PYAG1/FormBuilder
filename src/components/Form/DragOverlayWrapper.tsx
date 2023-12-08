@@ -36,6 +36,7 @@ if(isDesignerElement){
     const element = elements.find((el:any)=> el.id === elementId)
     if(!element)node = <div>Element not found</div>
     else{
+        //@ts-ignore
         const DesignerElementComponent= FormElements[element.type].designerComponet;
         node=<div className=' flex border rounded-md h-[120px] w-full px-4 opacity-60 pointer-events-none '>
              <DesignerElementComponent elementInstance={element}/>

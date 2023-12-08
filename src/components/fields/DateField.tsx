@@ -1,4 +1,9 @@
-import { MdTextFields } from "react-icons/md";
+
+import * as React from 'react';
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+
 
 import {
   ElementType,
@@ -7,21 +12,25 @@ import {
 } from "../../utils/types";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useEffect, useState} from "react";
+import { useEffect, useState,useTransition } from "react";
 import { useBuilderContext } from "../../context/designerContext";
 import ExclamationCircleIcon from "@heroicons/react/24/solid/ExclamationCircleIcon";
-import { Bs123 } from "react-icons/bs";
+import { BsCalendar,BsFillCalendarDateFill } from "react-icons/bs";
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+import { format } from 'date-fns';
+import dayjs from 'dayjs';
+import { Dayjs } from 'dayjs';
 
-const type: ElementType = "NumberField";
+
+const type: ElementType = "DateField";
 
 const extra = {
-  label: "NumberField",
-  placeholder: "0",
-  helperText: "This is a number field",
+  label: " Date Field",
+  helperText: "Pick a date",
   required: false,
 };
 
-export const NumberFieldFormElement: FormElement = {
+export const DateFieldFormElement: FormElement = {
   type,
   construct: (id: string) => ({
     id,
@@ -29,8 +38,8 @@ export const NumberFieldFormElement: FormElement = {
     extra,
   }),
   designerBtnElement: {
-    icon: Bs123,
-    label: "Number Field",
+    icon: BsFillCalendarDateFill,
+    label: "Date Field",
   },
   designerComponet: DesignerComponent,
   //@ts-ignore
@@ -59,20 +68,17 @@ function DesignerComponent({
   elementInstance: FormElementInstance;
 }) {
   const element = elementInstance as CustomInstance;
-  const { label, placeholder, required, helperText } = element.extra;
+  const { label, required, helperText } = element.extra;
   return (
-    <div className=" text-primary manrope bg-white flex flex-col gap-2 w-full p-2 ">
+    <div className=" text-primary manrope bg-white flex flex-col gap-2 w-full p-2 h-[120px] ">
       <label className=" capitalize text-base font-semibold  ">
         {label}
         {required && "*"}
       </label>
-      <input
-      type="number"
-        className="border w-full border-gray-300 text-base font-normal placeholder:text-gray-400 rounded-md  ring-primary focus:ring-primary focus:border-primary pl-4 py-2"
-        readOnly
-        disabled
-        placeholder={placeholder}
-      />
+  <button className=" w-full flex items-center gap-2 justify-start text-left border-gray-300 py-2 border-solid border-[1.5px] rounded-md px-1">
+    <BsCalendar />
+    <span>Pick a date</span>
+  </button>
       {helperText && <p className="text-sm">{helperText}</p>}
     </div>
   );
@@ -82,7 +88,7 @@ function FormComponent({
   elementInstance,
   submitValue,
   isInvalid,
-  defaultValue
+
 }: {
   elementInstance: FormElementInstance;
   submitValue: any;
@@ -90,53 +96,82 @@ function FormComponent({
   defaultValue?:string
 }) {
   const element = elementInstance as CustomInstance;
-  const { label, placeholder, required, helperText } = element.extra;
+  const { label,  required, helperText } = element.extra;
 
 
 
 
-  const [value, setvalue] = useState(defaultValue || "");
+  const [value, setValue] = React.useState<Dayjs | null>(dayjs());
   const [error, setError] = useState(false);
   useEffect(() => {
     setError(isInvalid === true);
   }, [isInvalid]);
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
   return (
-    <div className=" text-primary manrope bg-white flex flex-col gap-2 w-full p-2 mb-2 ">
-      <label className=" capitalize text-sm ">
-        {label}
-        {required && "*"}
-      </label>
-      <div className=" relative">
-        <input
-          className={`border w-full  text-base font-normal  rounded-md  ring-primary focus:ring-primary focus:border-primary pl-4 py-2 ${error ?"border-[red] placeholder:text-red-400" :"border-gray-300 placeholder:text-gray-400"}`}
-          type="number"
-          onChange={(e) => {
-            setvalue(e.target.value);
-          }}
-          onBlur={(e) => {
-            if (!submitValue) return; 
-            const valid = NumberFieldFormElement.validate(
-              element,
-              e.target.value
-            );
-            setError(!valid);
-            if (!valid) return;
-            submitValue(element.id, e.target.value);
-          }}
-          placeholder={placeholder}
-          value={value}
-        />
-        {error && (
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <ExclamationCircleIcon
-              className="h-5 w-5 text-red-500"
-              aria-hidden="true"
-            />
-          </div>
-        )}
-      </div>
-      {helperText && <p className="text-sm">{helperText}</p>}
+    <div className="text-primary manrope bg-white flex flex-col gap-2 w-full p-2 mb-2 ">
+    <label className="capitalize text-sm ">
+      {label}
+      {required && "*"}
+    </label>
+    <button
+      aria-describedby={id}
+      onClick={handleClick}
+      className="w-full flex items-center gap-2 justify-start text-left border-gray-300 py-2 border-solid border-[1.5px] rounded-md px-1"
+    >
+      <BsCalendar />
+      {value ? <p>{value.toString()}</p> : <span>Pick a date</span>}
+
+    </button>
+    <div className="relative">
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+      >
+<DateCalendar
+  value={value}
+  onChange={(date) => {
+    const formattedDate = dayjs(date).isValid() ? dayjs(date) : null;
+    setValue(formattedDate);
+    if(!submitValue) return;
+    const val= value?.toString() || ""
+    const valid= DateFieldFormElement.validate(element,val)
+    setError(!valid)
+    submitValue(element.id, formattedDate ? formattedDate.toString() : '');
+  }}
+/>
+
+
+      </Popover>
+      {error && (
+        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+          <ExclamationCircleIcon
+            className="h-5 w-5 text-red-500"
+            aria-hidden="true"
+          />
+        </div>
+      )}
     </div>
+    {helperText && <p className="text-sm">{helperText}</p>}
+  </div>
   );
 }
 
@@ -151,18 +186,17 @@ function PropertyComponent({
 
   const validationSchema = Yup.object({
     label: Yup.string().min(4).max(50).required("Label is required"),
-    placeholder: Yup.string().max(50),
     helperText: Yup.string().max(200),
     required: Yup.boolean(),
   });
 
-  const { label, placeholder, required, helperText } = element.extra;
+  const { label, required, helperText } = element.extra;
   const formik = useFormik({
     initialValues: {
       label: label || "",
       helperText: helperText || "",
       required: required || false,
-      placeholder: placeholder || "",
+ 
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -181,7 +215,7 @@ function PropertyComponent({
         label: values.label,
         helperText: values.helperText,
         required: values.required,
-        placeholder: values.placeholder,
+  
       },
     });
   }
@@ -207,19 +241,7 @@ function PropertyComponent({
           </p>
         </div>
 
-        <div className="space-y-3">
-          <label htmlFor="placeholder">Placeholder</label>
-          <input
-            type="text"
-            value={formik.values.placeholder}
-            id="placeholder"
-            onChange={formik.handleChange}
-            className="border w-full border-gray-300 text-base font-normal placeholder:text-gray-400 rounded-md ring-primary focus:ring-primary focus:border-primary pl-4 py-2"
-          />
-          <p className=" text-xs text-gray-600">
-            This is a temporary text shown in the input field when it is empty.
-          </p>
-        </div>
+   
 
         <div className="space-y-3">
           <label htmlFor="helperText">Hint</label>
@@ -249,3 +271,4 @@ function PropertyComponent({
     </div>
   );
 }
+ 

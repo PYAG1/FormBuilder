@@ -10,7 +10,7 @@ import PreviewBtn from "../../components/Form/PreviewBtn";
 import PublishFormBtn from "../../components/Form/PublishFormBtn";
 import Formbuilder from "../../components/Form/Formbuilder";
 import { IoCopyOutline } from "react-icons/io5";
-import {toast} from "react-toastify"
+import { toast } from "react-toastify";
 import {
   DndContext,
   MouseSensor,
@@ -24,14 +24,10 @@ import { ClipLoader } from "react-spinners";
 import NavBar from "../../components/Navigation/NavBar";
 
 const FormPage = () => {
-  
   const { id } = useParams();
-  const { userId ,getDataByIdAndUserId,formData}: any = useUserFormContext();
+  const { userId, getDataByIdAndUserId, formData }: any = useUserFormContext();
   const { setElement } = useBuilderContext();
   const [isReady, setIsReady] = useState(false);
-
-
-  
 
   useEffect(() => {
     getDataByIdAndUserId(id, userId);
@@ -79,39 +75,51 @@ const FormPage = () => {
     );
   }
 
-const shareUrl = `${window.location.origin}/submit/${formData?.shareUrl}`
-//this
-  if(formData?.published === true){
+  const shareUrl = `${window.location.origin}/submit/${formData?.shareUrl}`;
+  //this
+  if (formData?.published === true) {
     return (
       <>
-      <NavBar/>
-      <div className="flex flex-col h-[90vh] items-center justify-center">
-<div className="flex flex-col justify-center items-center">
-<p className=" raleway text-3xl font-semibold mb-3">Form Published</p>
-<p>Share this form</p>
+        <NavBar />
+        <div className="flex flex-col h-[90vh] items-center justify-center">
+          <div className="flex flex-col justify-center items-center">
+            <p className=" raleway text-3xl font-semibold mb-3">
+              Form Published
+            </p>
+            <p>Share this form</p>
 
-<div className="max-h-[200px] flex items-center justify-center mt-3">
-<input readOnly className=" min-w-[450px] border  text-sm h-full border-gray-300  font-normal text-gray-500 placeholder:text-gray-400 rounded-tl-md rounded-bl-md  pl-4 py-2" value={shareUrl} />
-<button title="copy" className=" bg-primary text-white  h-full  px-4 rounded-tr-md rounded-br"  onClick={()=>{
-    navigator.clipboard.writeText(shareUrl);
-toast.success("Link Copied")
-}}>
-<IoCopyOutline  />
-</button>
-
-</div>
-<div className=" flex w-full justify-center gap-[8em] mt-2">
-  <Link to={"/"} className=" underline">
-     Go to home
-  </Link>
-  <Link to={`/formDetails/${formData?.formId}`} className=" underline">
-    View
-  </Link>
-</div>
-</div>
-      </div>
+            <div className="max-h-[200px] flex items-center justify-center mt-3">
+              <input
+                readOnly
+                className=" min-w-[450px] border  text-sm h-full border-gray-300  font-normal text-gray-500 placeholder:text-gray-400 rounded-tl-md rounded-bl-md  pl-4 py-2"
+                value={shareUrl}
+              />
+              <button
+                title="copy"
+                className=" bg-primary text-white  h-full  px-4 rounded-tr-md rounded-br"
+                onClick={() => {
+                  navigator.clipboard.writeText(shareUrl);
+                  toast.success("Link Copied");
+                }}
+              >
+                <IoCopyOutline />
+              </button>
+            </div>
+            <div className=" flex w-full justify-center gap-[8em] mt-2">
+              <Link to={"/"} className=" underline">
+                Go to home
+              </Link>
+              <Link
+                to={`/formDetails/${formData?.formId}`}
+                className=" underline"
+              >
+                View
+              </Link>
+            </div>
+          </div>
+        </div>
       </>
-    )
+    );
   }
   //className=" w-[400px] py-3 bg-primary mt-3 rounded-lg text-white manrope  "
 

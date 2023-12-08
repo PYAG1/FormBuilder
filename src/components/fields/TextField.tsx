@@ -32,6 +32,7 @@ export const TextFieldFormElement: FormElement = {
     label: "Text Field",
   },
   designerComponet: DesignerComponent,
+  //@ts-ignore
   formComponent: FormComponent,
   propComponent: PropertyComponent,
 
@@ -59,7 +60,7 @@ function DesignerComponent({
   const element = elementInstance as CustomInstance;
   const { label, placeholder, required, helperText } = element.extra;
   return (
-    <div className=" text-primary manrope bg-white flex flex-col gap-2 w-full p-2 ">
+    <div className=" text-primary manrope bg-white flex flex-col gap-2 w-full p-2 h-[120px] ">
       <label className=" capitalize text-base font-semibold  ">
         {label}
         {required && "*"}

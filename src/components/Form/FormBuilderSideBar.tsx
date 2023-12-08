@@ -1,6 +1,4 @@
-import React from 'react'
-import { FormElements } from '../../utils/types'
-import SideBarBtnElements from './SideBarBtnElements'
+
 import { useBuilderContext } from '../../context/designerContext'
 import FormElementSideBar from './FormElementSideBar'
 import ElementPropertySidebar from './ElementPropertySidebar'

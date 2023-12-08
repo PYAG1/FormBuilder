@@ -7,21 +7,23 @@ import {
 } from "../../utils/types";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useEffect, useState} from "react";
+import { useEffect, useState,useTransition } from "react";
 import { useBuilderContext } from "../../context/designerContext";
 import ExclamationCircleIcon from "@heroicons/react/24/solid/ExclamationCircleIcon";
-import { Bs123 } from "react-icons/bs";
+import { BsTextarea, BsTextareaResize } from "react-icons/bs";
+import { Slider } from "@mui/material";
 
-const type: ElementType = "NumberField";
+const type: ElementType = "TextAreaField";
 
 const extra = {
-  label: "NumberField",
-  placeholder: "0",
-  helperText: "This is a number field",
+  label: "TextAreaField",
+  placeholder: "Enter a Text",
+  helperText: "This is a text field",
   required: false,
+  rows:3
 };
 
-export const NumberFieldFormElement: FormElement = {
+export const TextAreaFieldFormElement: FormElement = {
   type,
   construct: (id: string) => ({
     id,
@@ -29,8 +31,8 @@ export const NumberFieldFormElement: FormElement = {
     extra,
   }),
   designerBtnElement: {
-    icon: Bs123,
-    label: "Number Field",
+    icon: BsTextareaResize,
+    label: "TextArea Field",
   },
   designerComponet: DesignerComponent,
   //@ts-ignore
@@ -59,24 +61,26 @@ function DesignerComponent({
   elementInstance: FormElementInstance;
 }) {
   const element = elementInstance as CustomInstance;
-  const { label, placeholder, required, helperText } = element.extra;
+  const { label, placeholder, required, helperText, rows } = element.extra;
+
   return (
-    <div className=" text-primary manrope bg-white flex flex-col gap-2 w-full p-2 ">
-      <label className=" capitalize text-base font-semibold  ">
+    <div className="text-primary manrope bg-white flex flex-col gap-2 w-full p-3   ">
+      <label className="capitalize text-base font-semibold">
         {label}
         {required && "*"}
       </label>
-      <input
-      type="number"
-        className="border w-full border-gray-300 text-base font-normal placeholder:text-gray-400 rounded-md  ring-primary focus:ring-primary focus:border-primary pl-4 py-2"
+      <textarea
+        className="border w-full border-gray-300 text-base font-normal placeholder:text-gray-400 rounded-md ring-primary focus:ring-primary focus:border-primary pl-4 py-2"
         readOnly
         disabled
         placeholder={placeholder}
+        style={{ resize: 'none', height: 'auto' }} // Add this style
       />
       {helperText && <p className="text-sm">{helperText}</p>}
     </div>
   );
 }
+
 
 function FormComponent({
   elementInstance,
@@ -90,7 +94,7 @@ function FormComponent({
   defaultValue?:string
 }) {
   const element = elementInstance as CustomInstance;
-  const { label, placeholder, required, helperText } = element.extra;
+  const { label, placeholder, required, helperText,rows } = element.extra;
 
 
 
@@ -107,15 +111,15 @@ function FormComponent({
         {required && "*"}
       </label>
       <div className=" relative">
-        <input
+        <textarea
           className={`border w-full  text-base font-normal  rounded-md  ring-primary focus:ring-primary focus:border-primary pl-4 py-2 ${error ?"border-[red] placeholder:text-red-400" :"border-gray-300 placeholder:text-gray-400"}`}
-          type="number"
+     rows={rows}
           onChange={(e) => {
             setvalue(e.target.value);
           }}
           onBlur={(e) => {
             if (!submitValue) return; 
-            const valid = NumberFieldFormElement.validate(
+            const valid = TextAreaFieldFormElement.validate(
               element,
               e.target.value
             );
@@ -154,15 +158,17 @@ function PropertyComponent({
     placeholder: Yup.string().max(50),
     helperText: Yup.string().max(200),
     required: Yup.boolean(),
+    rows: Yup.number().min(1).max(10),
   });
 
-  const { label, placeholder, required, helperText } = element.extra;
+  const { label, placeholder, required, helperText,rows } = element.extra;
   const formik = useFormik({
     initialValues: {
       label: label || "",
       helperText: helperText || "",
       required: required || false,
       placeholder: placeholder || "",
+      rows:rows
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -182,6 +188,7 @@ function PropertyComponent({
         helperText: values.helperText,
         required: values.required,
         placeholder: values.placeholder,
+        rows:values.rows
       },
     });
   }
@@ -233,6 +240,20 @@ function PropertyComponent({
           <p className=" text-xs text-gray-600">
             This provides additional information or context for the input.
           </p>
+        </div>
+        <div className="space-y-3">
+          <label htmlFor="rows">Rows</label>
+          <Slider
+              size="small"
+              defaultValue={formik.values.rows}
+              min={1}
+              max={10}
+              step={1}
+              aria-label="Small"
+              valueLabelDisplay="auto"
+              onChange={(event, value) => formik.setFieldValue('rows', value)}
+            />
+
         </div>
 
         <div className=" flex  gap-3">
